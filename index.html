@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dope Wars: Perth</title>
+<style>
+  /* ===================================================
+     WINDOWS 98 — Classic Desktop reskin
+     =================================================== */
+  :root{
+    --gray:#c0c0c0;
+    --gray-d:#808080;
+    --gray-dd:#404040;
+    --white:#ffffff;
+    --black:#0a0a0a;
+    --navy:#000080;
+    --navy2:#1084d0;
+    --teal:#008080;
+    --green:#008000;
+    --maroon:#7a0000;
+    --face:#c0c0c0;
+    /* bevels */
+    --out: inset -1px -1px var(--black), inset 1px 1px var(--white), inset -2px -2px var(--gray-d), inset 2px 2px #dfdfdf;
+    --in:  inset -1px -1px var(--white), inset 1px 1px var(--gray-d), inset -2px -2px #dfdfdf, inset 2px 2px var(--black);
+    --in-thin: inset -1px -1px var(--white), inset 1px 1px var(--gray-d);
+    --font: Tahoma, "MS Sans Serif", Geneva, Verdana, "Segoe UI", sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:var(--font);
+    font-size:13px;
+    color:var(--black);
+    background:var(--teal);
+    /* faint dithered desktop */
+    background-image:
+      repeating-linear-gradient(45deg, rgba(255,255,255,.025) 0 2px, transparent 2px 4px);
+    -webkit-font-smoothing:none;
+    image-rendering:pixelated;
+  }
+  .desktop{min-height:100vh;padding:18px 12px 52px;}
+
+  /* ---------- window ---------- */
+  .window{
+    max-width:1040px;margin:0 auto;background:var(--gray);
+    box-shadow:var(--out);
+    padding:3px;
+  }
+  .titlebar{
+    height:22px;display:flex;align-items:center;gap:4px;padding:0 2px 0 4px;
+    background:linear-gradient(90deg,var(--navy),var(--navy2));
+    color:#fff;
+  }
+  .titlebar .tb-ico{font-size:13px;line-height:1}
+  .titlebar .tb-title{font-weight:bold;font-size:12px;letter-spacing:.2px;flex:1;
+    text-shadow:1px 1px 0 rgba(0,0,0,.4);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .tb-btns{display:flex;gap:2px}
+  .tb-btn{
+    width:17px;height:15px;background:var(--gray);box-shadow:var(--out);
+    display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:bold;
+    cursor:pointer;color:#000;line-height:1;font-family:Marlett, var(--font);
+  }
+  .tb-btn:active{box-shadow:var(--in)}
+  .tb-btn.close{font-family:var(--font)}
+
+  /* ---------- menu bar ---------- */
+  .menubar{display:flex;gap:0;padding:1px 0 2px;border-bottom:0}
+  .menu{padding:2px 8px;cursor:default;user-select:none;font-size:12px}
+  .menu:hover, .menu.open{background:var(--navy);color:#fff}
+  .menu u{text-decoration:underline}
+  .menu.disabled{color:var(--gray-d);pointer-events:none}
+
+  .dropdown{
+    position:absolute;z-index:500;background:var(--gray);box-shadow:var(--out);
+    padding:2px;min-width:150px;
+  }
+  .dropdown .mi{
+    padding:3px 22px 3px 22px;display:flex;justify-content:space-between;gap:18px;
+    cursor:default;white-space:nowrap;position:relative;
+  }
+  .dropdown .mi:hover:not(.dis){background:var(--navy);color:#fff}
+  .dropdown .mi.dis{color:var(--gray-d)}
+  .dropdown .mi .chk{position:absolute;left:7px}
+  .dropdown .sep{height:1px;margin:3px 2px;border-top:1px solid var(--gray-d);border-bottom:1px solid var(--white)}
+
+  .window-body{padding:8px;background:var(--gray)}
+
+  /* ---------- generic 98 widgets ---------- */
+  .btn98{
+    font-family:var(--font);font-size:12px;background:var(--gray);color:#000;
+    box-shadow:var(--out);border:none;padding:4px 12px;cursor:pointer;min-width:60px;
+    position:relative;
+  }
+  .btn98:active:not(:disabled){box-shadow:var(--in)}
+  .btn98:active:not(:disabled) .lbl{transform:translate(1px,1px)}
+  .btn98:focus{outline:1px dotted #000;outline-offset:-4px}
+  .btn98:disabled{color:var(--gray-d);text-shadow:1px 1px 0 var(--white);cursor:default}
+  .btn98.sm{min-width:auto;padding:3px 11px;font-size:12px}
+  .btn98.primary{font-weight:bold}
+  .btn98.big{padding:7px 22px;font-size:13px;font-weight:bold}
+
+  .sunken{background:var(--white);box-shadow:var(--in);}
+  .field{background:var(--white);box-shadow:var(--in);padding:2px 5px}
+
+  fieldset.group{border:none;box-shadow:var(--in-thin);padding:8px;margin:0;background:var(--gray)}
+  fieldset.group > legend, .grp-title{
+    font-weight:bold;padding:0 4px;font-size:11px;
+  }
+  .panel{box-shadow:var(--out);background:var(--gray);padding:8px;margin-bottom:8px}
+  .panel-title{font-weight:bold;font-size:12.5px;margin-bottom:7px;display:flex;align-items:center;gap:6px}
+  .panel-title .hint{margin-left:auto;font-weight:normal;color:var(--gray-dd);font-size:11px}
+
+  .screen{display:none}
+  .screen.active{display:block}
+
+  /* ---------- start / welcome ---------- */
+  .welcome{max-width:540px;margin:14px auto;box-shadow:var(--out);background:var(--gray)}
+  .welcome .wtitle{height:20px;background:linear-gradient(90deg,var(--navy),var(--navy2));color:#fff;
+    font-weight:bold;display:flex;align-items:center;padding:0 6px;font-size:12px}
+  .welcome .wbody{padding:18px;text-align:center}
+  .logo{
+    font-size:34px;font-weight:900;letter-spacing:1px;line-height:1;color:var(--navy);
+    text-shadow:2px 2px 0 #fff, 3px 3px 0 var(--gray-d);
+    margin:6px 0 2px;
+  }
+  .logo-sub{font-weight:bold;font-size:14px;margin-bottom:14px}
+  .blurb{font-size:12px;text-align:left;line-height:1.5;margin:0 auto 14px;max-width:460px}
+  .blurb b{color:var(--navy)}
+  .specs{display:flex;flex-wrap:wrap;gap:4px 14px;justify-content:center;margin:10px 0 4px;font-size:11px}
+  .specs .field{display:inline-block}
+  .disclaimer{font-size:10px;color:var(--gray-dd);margin-top:14px;line-height:1.4}
+
+  /* ---------- HUD / stats ---------- */
+  .statrow{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-bottom:8px}
+  .stat{box-shadow:var(--in);background:var(--white);padding:3px 6px;overflow:hidden}
+  .stat .lbl{font-size:10px;color:var(--gray-dd);text-transform:uppercase;letter-spacing:.3px;white-space:nowrap}
+  .stat .val{font-weight:bold;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .stat.cash .val{color:var(--green)}
+  .stat.debt .val{color:var(--maroon)}
+  .stat.bank .val{color:var(--navy)}
+
+  .hp-line{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+  .hp-line .cap{font-size:11px;white-space:nowrap}
+  .hp-bar{flex:1;height:18px;background:var(--white);box-shadow:var(--in);padding:2px;overflow:hidden}
+  .hp-fill{height:100%;
+    background:repeating-linear-gradient(to right,var(--navy) 0 9px, var(--gray) 9px 11px);
+    transition:width .3s steps(8)}
+  .hp-txt{font-size:11px;min-width:96px;text-align:right;white-space:nowrap}
+  .hp-txt b{color:var(--maroon)}
+
+  /* ---------- main grid (map + market) ---------- */
+  .game-grid{display:grid;gap:8px;grid-template-columns:1fr}
+  .trade-area{display:grid;gap:8px;grid-template-columns:1fr}
+  .trade-area .panel{margin-bottom:0}
+  @media(min-width:760px){
+    .game-grid{grid-template-columns:440px 1fr;align-items:start}
+    .trade-area{grid-template-rows:fit-content(62%) minmax(0,1fr)}
+    .trade-area .panel{display:flex;flex-direction:column;min-height:0}
+    .trade-area .panel .sunken{flex:1;display:flex;flex-direction:column;min-height:0}
+    .trade-area .panel .lst-body{flex:1;min-height:0;max-height:none}
+  }
+
+  /* ---------- map ---------- */
+  .map-canvas{background:var(--white);box-shadow:var(--in);padding:3px}
+  .map-canvas svg{display:block;width:100%;height:auto}
+  .map-foot{font-size:10px;color:var(--gray-dd);margin-top:5px;text-align:center}
+  .finish-bar{align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;background:#fbf7c0}
+  .finish-bar span{font-weight:bold;font-size:12.5px}
+  .map-canvas.final .pin{pointer-events:none}
+  .map-canvas.final .pin .dot{fill:#9a9a9a;stroke:#777}
+  .map-canvas.final .pin:not(.current) .plabel{fill:#888}
+  .pin{cursor:pointer}
+  .pin .dot{fill:#4a4a4a;stroke:#1a1a1a;stroke-width:1}
+  .pin:hover .dot{fill:#b8860b;stroke:#000}
+  .pin .plabel{font:bold 10px var(--font);fill:#1a1a1a;cursor:pointer;
+    paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round}
+  .pin .hit{cursor:pointer}
+  .pin .halo{opacity:0;transform-box:fill-box;transform-origin:center}
+  .pin.current{cursor:default}
+  .pin.current .dot{fill:#cc0000;stroke:#600}
+  .pin.current .plabel{fill:#aa0000}
+  .pin.current .halo{opacity:1;stroke:#cc0000;animation:halo 1.5s ease-out infinite}
+  @keyframes halo{0%{transform:scale(.6);opacity:.9}100%{transform:scale(2.4);opacity:0}}
+
+  /* ---------- market ---------- */
+  .market{display:flex;flex-direction:column}
+  .m-head,.m-row{display:grid;grid-template-columns:1fr 86px 96px;align-items:center;gap:6px;padding:4px 6px}
+  .m-head{font-size:10px;color:var(--gray-dd);text-transform:uppercase;font-weight:bold;
+    border-bottom:1px solid var(--gray-d);position:sticky;top:0;background:var(--white)}
+  .m-row{border-bottom:1px dotted #cfcfcf}
+  .m-row:nth-child(even){background:#f3f3f3}
+  .m-row.held{background:#fffbe0}
+  .m-name{font-weight:bold;font-size:12px}
+  .m-sub{font-size:10px;color:var(--gray-dd)}
+  .m-sub .own{color:var(--navy);font-weight:bold}
+  .m-price{text-align:right;font-weight:bold;font-size:13px;font-variant-numeric:tabular-nums}
+  .m-acts{display:flex;gap:4px;justify-content:flex-end}
+  .tag{font-size:9px;font-weight:bold;padding:0 3px;margin-left:5px;box-shadow:var(--out)}
+  .tag.deal{background:#d6f5d6;color:var(--green)}
+  .tag.spike{background:#ffd9d9;color:var(--maroon)}
+  .empty{padding:14px;text-align:center;color:var(--gray-dd);font-style:italic}
+
+  /* ---------- list boxes (Available / Esky) ---------- */
+  .subtle{font-weight:normal;color:var(--gray-dd);font-size:11px}
+  .lst-body{max-height:300px;overflow-y:auto}
+  .lst-head{display:grid;gap:6px;padding:6px 10px;font-size:11px;letter-spacing:.3px;text-transform:uppercase;
+    font-weight:bold;color:var(--gray-dd);background:var(--white);border-bottom:1px solid var(--gray-d);position:sticky;top:0;z-index:1}
+  .lst-row{display:grid;gap:6px;padding:7px 10px;align-items:center;cursor:pointer;border-bottom:1px dotted #e6e6e6;font-size:13px}
+  .lst-row:nth-child(even){background:#f4f4f4}
+  .lst-row:hover{background:#d7e6ff}
+  .lst-row .nm{font-weight:bold}
+  .lst-row.dis{cursor:default;color:var(--gray-d)}
+  .lst-row.dis .nm{color:var(--gray-d)}
+  .lst-row.dis:hover{background:transparent}
+  .avail-grid{grid-template-columns:1fr 96px 66px}
+  .esky-grid{grid-template-columns:1fr 42px 80px 82px 66px}
+  .lst-row .acts{display:flex;justify-content:flex-end}
+  .lst-head .acts-sp{}
+  .r{text-align:right;font-variant-numeric:tabular-nums}
+  .pl-pos{color:var(--green);font-weight:bold}
+  .pl-neg{color:var(--maroon);font-weight:bold}
+  .lst-empty{padding:18px;text-align:center;color:var(--gray-dd);font-style:italic;font-size:12px}
+
+  /* ---------- services ---------- */
+  .svc-row{display:flex;flex-wrap:wrap;gap:6px}
+  .note{font-size:11px;color:var(--gray-dd);margin-top:7px;line-height:1.4}
+  .note b{color:var(--navy)}
+
+  /* ---------- log ---------- */
+  .log{height:120px;overflow-y:auto;background:var(--white);box-shadow:var(--in);padding:5px 7px;
+    display:flex;flex-direction:column-reverse;font-size:11px;line-height:1.5}
+  .logline{padding:1px 0;border-bottom:1px dotted #ececec}
+  .logline b{color:#000}
+  .logline.good{color:var(--green)}
+  .logline.bad{color:var(--maroon)}
+  .logline.gold{color:#8a6d00}
+
+  /* ---------- dialogs ---------- */
+  .overlay{position:fixed;inset:0;z-index:900;display:none;align-items:center;justify-content:center;
+    padding:14px;background:rgba(0,0,0,.18)}
+  .overlay.active{display:flex}
+  .dialog{width:100%;max-width:420px;background:var(--gray);box-shadow:var(--out);padding:3px}
+  .dlg-title{height:20px;background:linear-gradient(90deg,var(--navy),var(--navy2));color:#fff;
+    font-weight:bold;display:flex;align-items:center;padding:0 4px;font-size:12px;gap:5px}
+  .dlg-title .x{margin-left:auto;width:16px;height:14px;background:var(--gray);box-shadow:var(--out);
+    color:#000;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:9px}
+  .dlg-body{padding:14px}
+  .dlg-row{display:flex;gap:12px;align-items:flex-start;margin-bottom:12px}
+  .dlg-ico{font-size:30px;line-height:1;flex-shrink:0;
+    width:38px;height:38px;display:flex;align-items:center;justify-content:center;
+    background:var(--white);box-shadow:var(--in)}
+  .dlg-text{font-size:12px;line-height:1.5}
+  .dlg-text b{color:var(--navy)}
+  .dlg-btns{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+  .dlg-btns .btn98{min-width:80px}
+
+  /* trade widgets */
+  .qty{display:flex;align-items:center;gap:6px;justify-content:center;margin:10px 0 6px}
+  .qty .btn98{min-width:34px;width:34px;height:30px;font-size:18px;font-weight:bold;padding:0}
+  .qty input{width:90px;text-align:center;font-size:18px;font-weight:bold;font-family:var(--font);
+    background:var(--white);box-shadow:var(--in);border:none;padding:5px;font-variant-numeric:tabular-nums}
+  .qty input::-webkit-outer-spin-button,.qty input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  .qslider{width:100%;margin:6px 0;accent-color:var(--navy)}
+  .chips{display:flex;gap:5px;justify-content:center;margin-bottom:6px;flex-wrap:wrap}
+  .chip{font-size:11px;padding:2px 9px;cursor:pointer;background:var(--gray);box-shadow:var(--out)}
+  .chip:active{box-shadow:var(--in)}
+  .totals{display:flex;justify-content:space-between;font-size:12px;margin:6px 2px 12px}
+  .totals b{font-size:14px}
+
+  /* gameover */
+  .go-score{font-size:40px;font-weight:900;color:var(--navy);text-shadow:2px 2px 0 #fff,3px 3px 0 var(--gray-d);margin:4px 0;text-align:center}
+  .go-rank{text-align:center;font-weight:bold;font-size:14px;color:var(--maroon);margin-bottom:12px}
+  .go-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:10px 0}
+  .go-hs{font-size:11px;text-align:center;margin:10px 0;color:var(--gray-dd)}
+  .go-hs b{color:#8a6d00}
+
+  /* ---------- taskbar ---------- */
+  .taskbar{position:fixed;left:0;right:0;bottom:0;height:32px;z-index:800;
+    background:var(--gray);box-shadow:inset 0 2px 0 #dfdfdf, inset 0 1px 0 #fff;
+    border-top:1px solid var(--white);display:flex;align-items:center;gap:5px;padding:3px 4px}
+  .start-btn{display:flex;align-items:center;gap:5px;font-weight:bold;font-size:12px;
+    background:var(--gray);box-shadow:var(--out);padding:3px 9px 3px 6px;cursor:pointer}
+  .start-btn:active{box-shadow:var(--in)}
+  .start-btn .flag{font-size:13px}
+  .task-app{flex:1;max-width:240px;font-size:11px;box-shadow:var(--in);background:#bdbdbd;padding:4px 8px;
+    display:flex;align-items:center;gap:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:bold}
+  .tray{margin-left:auto;box-shadow:var(--in-thin);padding:4px 8px;font-size:11px;display:flex;gap:7px;align-items:center}
+
+  /* ---------- toast ---------- */
+  .toast{position:fixed;left:50%;bottom:46px;transform:translateX(-50%) translateY(10px);
+    background:#ffffe1;box-shadow:var(--out);border:1px solid var(--black);padding:6px 12px;font-size:11px;
+    z-index:950;opacity:0;pointer-events:none;transition:.18s;max-width:90vw}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .toast.bad{background:#ffe1e1}
+  .toast.good{background:#e1ffe1}
+
+  ::-webkit-scrollbar{width:16px;height:16px}
+  ::-webkit-scrollbar-track{background:#dfdfdf;box-shadow:var(--in-thin)}
+  ::-webkit-scrollbar-thumb{background:var(--gray);box-shadow:var(--out)}
+  a{color:var(--navy)}
+</style>
+</head>
+<body>
+<div class="desktop">
+  <div class="window" id="appWindow">
+    <div class="titlebar">
+      <span class="tb-ico">🦘</span>
+      <span class="tb-title">Dope Wars: Perth</span>
+      <div class="tb-btns">
+        <div class="tb-btn" title="Minimise" onclick="Game.tbJoke('min')">_</div>
+        <div class="tb-btn" title="Maximise" onclick="Game.tbJoke('max')">▢</div>
+        <div class="tb-btn close" title="Close" onclick="Game.tbJoke('close')">✕</div>
+      </div>
+    </div>
+
+    <div class="menubar" id="menubar">
+      <div class="menu" data-menu="file"><u>F</u>ile</div>
+      <div class="menu" data-menu="travel"><u>T</u>ravel</div>
+      <div class="menu" data-menu="bank"><u>B</u>ank</div>
+      <div class="menu" data-menu="help"><u>H</u>elp</div>
+    </div>
+
+    <div class="window-body">
+
+      <!-- ============ START ============ -->
+      <section id="startScreen" class="screen active">
+        <div class="welcome">
+          <div class="wtitle">🦘 Welcome to Perth</div>
+          <div class="wbody">
+            <div class="logo">DOPE WARS</div>
+            <div class="logo-sub">PERTH · WESTERN AUSTRALIA</div>
+            <p class="blurb" style="text-align:center">Buy low. Sell high. Clear the debt in 30 days.</p>
+            <div class="specs">
+              <span class="field">🗓️ 30 days</span>
+              <span class="field">📍 9 suburbs</span>
+              <span class="field">📦 8 goods</span>
+              <span class="field">🦈 debt +10%/day</span>
+            </div>
+            <p style="margin-top:14px"><button class="btn98 big primary" onclick="Game.start()"><span class="lbl">▸ Start</span></button></p>
+            <p class="disclaimer">Parody trade-sim · fictional goods.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ GAME ============ -->
+      <section id="gameScreen" class="screen">
+
+        <div class="statrow">
+          <div class="stat"><div class="lbl">Suburb</div><div class="val" id="hudLoc">Perth CBD</div></div>
+          <div class="stat cash"><div class="lbl">Cash</div><div class="val" id="hudCash">$0</div></div>
+          <div class="stat bank"><div class="lbl">Bankwest</div><div class="val" id="hudBank">$0</div></div>
+          <div class="stat debt"><div class="lbl">Sharkie</div><div class="val" id="hudDebt">$0</div></div>
+          <div class="stat"><div class="lbl" id="dayLbl">Day</div><div class="val" id="hudDay">1 / 30</div></div>
+        </div>
+
+        <div class="hp-line">
+          <span class="cap">❤️ Health</span>
+          <div class="hp-bar"><div class="hp-fill" id="hpFill" style="width:100%"></div></div>
+          <span class="hp-txt" id="hpLabel"><b>100</b> HP · 🔫×0</span>
+        </div>
+
+        <div class="panel finish-bar" id="finishBar" style="display:none">
+          <span>📅 Final day — make your last trades, then finish up.</span>
+          <button class="btn98 primary" onclick="Game.confirmFinish()"><span class="lbl">🏁 Finish &amp; Cash Out</span></button>
+        </div>
+
+        <div class="game-grid">
+          <div class="panel">
+            <div class="panel-title">🗺️ Map of Perth <span class="hint" id="mapHint">click to travel</span></div>
+            <div class="map-canvas" id="mapWrap"></div>
+            <div class="map-foot">🔴 you are here · each trip = 1 day</div>
+          </div>
+
+          <div class="trade-area">
+            <div class="panel">
+              <div class="panel-title">🛒 Available <span class="hint" id="marketHint"></span></div>
+              <div class="sunken">
+                <div class="lst-head avail-grid"><span>Goods</span><span class="r">Price</span><span class="acts-sp"></span></div>
+                <div class="lst-body" id="market"></div>
+              </div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-title">📦 Esky <span class="hint" id="eskyCap">0/100</span></div>
+              <div class="sunken">
+                <div class="lst-head esky-grid"><span>Goods</span><span class="r">Qty</span><span class="r">Now</span><span class="r">P/L</span><span class="acts-sp"></span></div>
+                <div class="lst-body" id="esky"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel" id="svcCard">
+          <div class="panel-title">🏦 Around Town</div>
+          <div id="svcBody"></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">📰 News</div>
+          <div class="log" id="log"></div>
+        </div>
+
+      </section>
+
+      <!-- ============ GAME OVER ============ -->
+      <section id="overScreen" class="screen">
+        <div class="welcome">
+          <div class="wtitle" id="goTitlebar">🏁 Final Tally</div>
+          <div class="wbody">
+            <div class="dlg-ico" id="goEmoji" style="margin:0 auto 8px;width:52px;height:52px;font-size:38px">💰</div>
+            <div style="font-weight:bold;font-size:13px" id="goTitle">RUN COMPLETE</div>
+            <div class="go-score" id="goScore">$0</div>
+            <div class="go-rank" id="goRank">Battler</div>
+            <div class="go-grid" id="goGrid"></div>
+            <p class="go-hs" id="goHs"></p>
+
+            <div id="lbBox" style="display:none;margin-top:14px;text-align:left">
+              <div style="display:flex;gap:6px;margin-bottom:10px">
+                <input id="lbName" maxlength="20" placeholder="Your handle"
+                  style="flex:1;min-width:0;font-family:var(--font);font-size:13px;padding:5px 7px;background:var(--white);box-shadow:var(--in);border:none">
+                <button id="lbSubmit" class="btn98 primary"><span class="lbl">Submit score</span></button>
+              </div>
+              <div class="panel-title">🏆 Leaderboard</div>
+              <div class="sunken"><div id="lbRows" class="log" style="flex-direction:column"></div></div>
+            </div>
+
+            <p style="margin-top:12px"><button class="btn98 big primary" onclick="Game.start()"><span class="lbl">▸ Run It Back</span></button></p>
+          </div>
+        </div>
+      </section>
+
+    </div><!-- /window-body -->
+  </div><!-- /window -->
+
+  <div class="taskbar">
+    <div class="start-btn" onclick="Game.tbJoke('start')"><span class="flag">🪟</span> Start</div>
+    <div class="task-app">🦘 Dope Wars: Perth</div>
+    <div class="tray" id="tray">🦘 <span id="trayDay">Day 1</span></div>
+  </div>
+</div>
+
+<!-- ============ TRADE DIALOG ============ -->
+<div class="overlay" id="tradeOverlay">
+  <div class="dialog">
+    <div class="dlg-title"><span id="tmTitle">Buy</span><span class="x" onclick="Game.closeTrade()">✕</span></div>
+    <div class="dlg-body">
+      <p class="dlg-text" id="tmText" style="margin-bottom:8px"></p>
+      <div class="chips" id="tmChips"></div>
+      <div class="qty">
+        <button class="btn98" onclick="Game.tradeStep(-1)"><span class="lbl">–</span></button>
+        <input id="tmQty" type="number" inputmode="numeric" value="1" oninput="Game.tradeInput()">
+        <button class="btn98" onclick="Game.tradeStep(1)"><span class="lbl">+</span></button>
+      </div>
+      <input type="range" class="qslider" id="tmSlider" min="0" max="1" value="1" oninput="Game.tradeSlider()">
+      <div class="totals"><span id="tmUnit"></span><span>Total: <b id="tmTotal">$0</b></span></div>
+      <div class="dlg-btns">
+        <button class="btn98 primary" id="tmConfirm" onclick="Game.tradeConfirm()"><span class="lbl">OK</span></button>
+        <button class="btn98" onclick="Game.closeTrade()"><span class="lbl">Cancel</span></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ EVENT DIALOG ============ -->
+<div class="overlay" id="eventOverlay">
+  <div class="dialog">
+    <div class="dlg-title"><span id="evBar">⚠️ Heads Up</span></div>
+    <div class="dlg-body">
+      <div class="dlg-row">
+        <div class="dlg-ico" id="evEmoji">⚠️</div>
+        <div class="dlg-text"><div style="font-weight:bold;margin-bottom:3px" id="evTitle"></div><div id="evText"></div></div>
+      </div>
+      <div class="dlg-btns" id="evBtns"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ CONFIRM DIALOG ============ -->
+<div class="overlay" id="confirmOverlay">
+  <div class="dialog">
+    <div class="dlg-title"><span id="cfBar">Confirm</span></div>
+    <div class="dlg-body">
+      <div class="dlg-row">
+        <div class="dlg-ico">❓</div>
+        <div class="dlg-text"><div style="font-weight:bold;margin-bottom:3px" id="cfTitle"></div><div id="cfText"></div></div>
+      </div>
+      <div class="dlg-btns">
+        <button class="btn98 primary" id="cfYes"><span class="lbl">Yes</span></button>
+        <button class="btn98" onclick="Game.closeConfirm()"><span class="lbl">No</span></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+
+/* =========================================================
+   DOPE WARS: PERTH — Windows 98 edition
+   ========================================================= */
+
+const MAX_DAYS = 30;
+const START_CASH = 2000;
+const START_DEBT = 5500;
+const BASE_CAP = 100;
+const DEBT_INT = 0.10;
+const BANK_INT = 0.045;
+
+// ---- Live leaderboard (Supabase REST; degrades gracefully if unset) ----
+const SB_URL = "https://jmxrnvyojhxacpmzxttn.supabase.co";   // <- paste Supabase Project URL
+const SB_KEY = "sb_publishable_imF8JmgWrg_DcEHJt3UU6A_y2qpOy17";   // <- paste anon public key
+const LB_ON  = /^https/.test(SB_URL) && SB_KEY.length > 20;
+
+const GOODS = [
+  { name:"Servo Pies",  emoji:"🥧", min:3,    max:24,    unit:"pie"   },
+  { name:"Goon",        emoji:"📦", min:9,    max:48,    unit:"sack"  },
+  { name:"Durries",     emoji:"🚬", min:18,   max:72,    unit:"pack"  },
+  { name:"Pingers",     emoji:"💊", min:22,   max:95,    unit:"pill"  },
+  { name:"Bush Bud",    emoji:"🌿", min:90,   max:340,   unit:"oz"    },
+  { name:"Speed",       emoji:"⚡", min:280,  max:980,   unit:"g"     },
+  { name:"Coke",        emoji:"❄️", min:1500, max:4600,  unit:"g"     },
+  { name:"Crystal",     emoji:"💎", min:2100, max:6800,  unit:"point" },
+];
+const GMAP = Object.fromEntries(GOODS.map(g=>[g.name,g]));
+
+const LOCATIONS = [
+  { name:"Perth CBD",   blurb:"city centre", bank:true  },
+  { name:"Northbridge", blurb:"nightlife district", bank:false },
+  { name:"Fremantle",   blurb:"port town", bank:false },
+  { name:"Scarborough", blurb:"beach suburb", bank:false },
+  { name:"Joondalup",   blurb:"northern suburbs", bank:false },
+  { name:"Mandurah",    blurb:"southern coast", bank:false },
+  { name:"Midland",     blurb:"eastern suburbs", bank:false },
+  { name:"Rockingham",  blurb:"coast, south", bank:false },
+  { name:"Armadale",    blurb:"southeast foothills", bank:false },
+];
+
+// Map geometry (viewBox 0 0 300 400). [x,y]
+const POS = {
+  "Joondalup":[92,50], "Scarborough":[80,118], "Northbridge":[150,122],
+  "Perth CBD":[162,146], "Midland":[252,116], "Fremantle":[90,188],
+  "Rockingham":[76,276], "Mandurah":[68,360], "Armadale":[208,246],
+};
+const LBL = { // [dx,dy,anchor]
+  "Joondalup":[9,3,"start"], "Scarborough":[9,3,"start"], "Northbridge":[9,3,"start"],
+  "Perth CBD":[9,4,"start"], "Midland":[-9,3,"end"], "Fremantle":[9,3,"start"],
+  "Rockingham":[9,3,"start"], "Mandurah":[9,3,"start"], "Armadale":[9,3,"start"],
+};
+const ROADS = [
+  ["Joondalup","Scarborough"],["Scarborough","Northbridge"],["Scarborough","Perth CBD"],
+  ["Northbridge","Perth CBD"],["Perth CBD","Midland"],["Perth CBD","Fremantle"],
+  ["Fremantle","Rockingham"],["Rockingham","Mandurah"],
+  ["Perth CBD","Armadale"],["Armadale","Rockingham"],
+];
+
+const MARKET_EVENTS = [
+  { msg:"Festival in {loc} — <b>Pingers</b> in demand.", good:"Pingers", type:"spike", mult:[2.4,3.6] },
+  { msg:"Crowds in {loc} — <b>Goon</b> in demand.", good:"Goon", type:"spike", mult:[2,3] },
+  { msg:"Lab raided — <b>Crystal</b> scarce, prices up.", good:"Crystal", type:"spike", mult:[2.2,3.4] },
+  { msg:"Big harvest up north — <b>Bush Bud</b> cheap.", good:"Bush Bud", type:"crash", mult:[0.25,0.45] },
+  { msg:"Dealer arrested — <b>Coke</b> prices spike.", good:"Coke", type:"spike", mult:[2,3.2] },
+  { msg:"Servo clearance — <b>Servo Pies</b> almost free.", good:"Servo Pies", type:"crash", mult:[0.2,0.4] },
+  { msg:"Transport strike — <b>Durries</b> scarce, prices up.", good:"Durries", type:"spike", mult:[2,2.8] },
+  { msg:"Market flooded — <b>Speed</b> gone cheap.", good:"Speed", type:"crash", mult:[0.3,0.5] },
+  { msg:"Payday boom — <b>everything</b> sells high.", good:null, type:"spike", mult:[1.4,1.8] },
+];
+
+let S = null;
+
+function freshState(){
+  return {
+    day:1, cash:START_CASH, debt:START_DEBT, bank:0,
+    hp:100, guns:0, cap:BASE_CAP, loc:"Perth CBD",
+    inv:Object.fromEntries(GOODS.map(g=>[g.name,0])),
+    avg:Object.fromEntries(GOODS.map(g=>[g.name,0])),
+    market:{}, note:"", log:[],
+    coatOffered:false, gunOfferedDay:0,
+  };
+}
+
+const $ = id => document.getElementById(id);
+const rnd = (a,b)=> a + Math.random()*(b-a);
+const rndi = (a,b)=> Math.floor(rnd(a,b+1));
+const pick = arr => arr[Math.floor(Math.random()*arr.length)];
+const money = n => { n=Math.round(n); const neg=n<0; n=Math.abs(n); return (neg?"-$":"$")+n.toLocaleString("en-AU"); };
+const usedCap = () => Object.values(S.inv).reduce((a,b)=>a+b,0);
+const freeCap = () => S.cap - usedCap();
+const netWorth = () => S.cash + S.bank - S.debt;
+const pinId = n => "pin-"+n.replace(/\s+/g,"_");
+
+function toast(msg, kind=""){
+  const t=$("toast"); t.textContent=msg; t.className="toast show "+kind;
+  clearTimeout(toast._t); toast._t=setTimeout(()=>t.className="toast",1900);
+}
+function logMsg(msg, kind=""){ S.log.push({msg,kind}); if(S.log.length>40) S.log.shift(); }
+
+// =========================================================
+const Game = {
+
+  start(){
+    S = freshState();
+    this.closeAllOverlays();
+    this.buildMap();
+    this.genMarket(true);
+    logMsg("Day 1 — Perth CBD.","gold");
+    this.showScreen("gameScreen");
+    this.render();
+  },
+
+  showScreen(id){
+    document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+    $(id).classList.add("active");
+    window.scrollTo({top:0});
+  },
+
+  // ---------- map ----------
+  buildMap(){
+    const wrap=$("mapWrap"); if(!wrap) return;
+    let s = `<svg viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg">`;
+    // land
+    s += `<rect x="0" y="0" width="300" height="400" fill="#e7e3cf"/>`;
+    // subtle land texture
+    s += `<rect x="0" y="0" width="300" height="400" fill="url(#dots)"/>`;
+    s += `<defs><pattern id="dots" width="10" height="10" patternUnits="userSpaceOnUse">
+      <circle cx="1" cy="1" r="0.6" fill="#d8d3ba"/></pattern></defs>`;
+    // ocean
+    s += `<path d="M0,0 L80,0 C76,40 74,90 72,130 C70,175 66,225 60,290 C54,345 48,372 44,400 L0,400 Z" fill="#79a4d6"/>`;
+    s += `<path d="M0,0 L80,0 C76,40 74,90 72,130 C70,175 66,225 60,290 C54,345 48,372 44,400 L0,400 Z" fill="none" stroke="#5b86bf" stroke-width="1.2"/>`;
+    s += `<text x="22" y="220" transform="rotate(-90 22 220)" fill="#3f6aa8" font-size="11" font-weight="bold" letter-spacing="3" font-family="Tahoma,sans-serif">INDIAN OCEAN</text>`;
+    // swan river
+    s += `<path d="M70,193 C100,176 135,150 162,146 C200,141 232,148 256,150" fill="none" stroke="#4a7fc0" stroke-width="5" stroke-linecap="round"/>`;
+    s += `<text x="120" y="172" fill="#2f5a96" font-size="8.5" font-style="italic" font-family="Tahoma,sans-serif">Swan R.</text>`;
+    // roads
+    for(const [a,b] of ROADS){
+      const [x1,y1]=POS[a], [x2,y2]=POS[b];
+      s += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#9a9070" stroke-width="1.4" stroke-dasharray="3 2"/>`;
+    }
+    // compass
+    s += `<g font-family="Tahoma,sans-serif">
+      <path d="M280,10 L280,30 M280,10 L276,17 M280,10 L284,17" stroke="#555" stroke-width="1.4" fill="none"/>
+      <text x="280" y="40" text-anchor="middle" font-size="10" font-weight="bold" fill="#555">N</text></g>`;
+    // pins
+    for(const name of Object.keys(POS)){
+      const [x,y]=POS[name], [dx,dy,anc]=LBL[name];
+      s += `<g class="pin" id="${pinId(name)}" data-loc="${name}">
+        <circle class="hit" cx="${x}" cy="${y}" r="16" fill="transparent" pointer-events="all"/>
+        <circle class="halo" cx="${x}" cy="${y}" r="5" fill="none" stroke-width="2"/>
+        <circle class="dot" cx="${x}" cy="${y}" r="4"/>
+        <text class="plabel" x="${x+dx}" y="${y+dy}" text-anchor="${anc}">${name}</text>
+      </g>`;
+    }
+    s += `</svg>`;
+    wrap.innerHTML = s;
+    // wire clicks
+    wrap.querySelectorAll(".pin").forEach(g=>{
+      g.addEventListener("click", ()=>{
+        const loc=g.getAttribute("data-loc");
+        if(loc===S.loc || S.day>=MAX_DAYS) return;
+        this.travel(loc);
+      });
+    });
+  },
+  updateMap(){
+    const wrap=$("mapWrap"); if(!wrap) return;
+    wrap.querySelectorAll(".pin").forEach(g=>{
+      g.classList.toggle("current", g.getAttribute("data-loc")===S.loc);
+    });
+  },
+
+  // ---------- market ----------
+  genMarket(first=false){
+    const count = rndi(5, GOODS.length);
+    const shuffled = [...GOODS].sort(()=>Math.random()-0.5);
+    const avail = new Set(shuffled.slice(0,count).map(g=>g.name));
+    S.market = {};
+    for(const g of GOODS){
+      S.market[g.name] = { price:Math.round(rnd(g.min,g.max)), deal:false, spike:false, avail:avail.has(g.name) };
+    }
+    S.note="";
+    if(!first && Math.random()<0.55){
+      const ev=pick(MARKET_EVENTS);
+      const targets = ev.good?[ev.good]:GOODS.map(g=>g.name);
+      for(const gn of targets){
+        const m=S.market[gn]; if(!m) continue;
+        m.avail=true; m.price=Math.max(1,Math.round(m.price*rnd(ev.mult[0],ev.mult[1])));
+        if(ev.type==="spike") m.spike=true; else m.deal=true;
+      }
+      S.note=ev.msg.replace("{loc}",S.loc);
+      logMsg(S.note, ev.type==="spike"?"bad":"good");
+    } else {
+      for(const g of GOODS){
+        const m=S.market[g.name]; if(!m.avail) continue;
+        const pos=(m.price-g.min)/(g.max-g.min);
+        if(pos<0.18) m.deal=true; else if(pos>0.86) m.spike=true;
+      }
+    }
+  },
+
+  // ---------- render ----------
+  render(){
+    if(!S) return;
+    const loc = LOCATIONS.find(l=>l.name===S.loc);
+    $("hudLoc").textContent = S.loc;
+    $("hudDay").textContent = `${S.day} / ${MAX_DAYS}`;
+    $("hudCash").textContent = money(S.cash);
+    $("hudBank").textContent = money(S.bank);
+    $("hudDebt").textContent = money(S.debt);
+    $("trayDay").textContent = `Day ${S.day}`;
+
+    const hpPct=Math.max(0,Math.min(100,S.hp));
+    $("hpFill").style.width=hpPct+"%";
+    $("hpLabel").innerHTML=`<b>${Math.max(0,Math.round(S.hp))}</b> HP · 🔫×${S.guns}`;
+
+    const fin = S.day>=MAX_DAYS;
+    $("finishBar").style.display = fin?"flex":"none";
+    $("mapWrap").classList.toggle("final", fin);
+    $("mapHint").textContent = fin?"final day — finish up":"click to travel";
+
+    $("marketHint").textContent = loc?loc.blurb:"";
+    this.updateMap();
+    this.renderAvailable();
+    this.renderEsky();
+    this.renderServices(loc);
+    this.renderLog();
+    this.syncTradeHeight();
+  },
+  syncTradeHeight(){
+    const ta=document.querySelector(".trade-area");
+    const map=document.querySelector(".game-grid > .panel");
+    if(!ta||!map) return;
+    if(window.innerWidth>=760 && $("gameScreen").classList.contains("active")){
+      ta.style.height=map.offsetHeight+"px";
+    } else {
+      ta.style.height="";
+    }
+  },
+
+  renderAvailable(){
+    const wrap=$("market"); wrap.innerHTML="";
+    const avail=GOODS.filter(g=>S.market[g.name].avail);
+    if(!avail.length){ wrap.innerHTML=`<div class="lst-empty">No goods for sale here today.</div>`; return; }
+    for(const g of avail){
+      const m=S.market[g.name];
+      const tag = m.deal?`<span class="tag deal">DEAL</span>`:(m.spike?`<span class="tag spike">HOT</span>`:"");
+      const row=document.createElement("div");
+      row.className="lst-row avail-grid";
+      row.title="Buy "+g.name;
+      row.onclick=()=>this.openTrade('buy',g.name);
+      row.innerHTML=`<span class="nm">${g.emoji} ${g.name}${tag}</span>`+
+        `<span class="r">${money(m.price)}</span>`+
+        `<span class="acts"><button class="btn98 sm" onclick="event.stopPropagation();Game.openTrade('buy','${g.name}')"><span class="lbl">Buy</span></button></span>`;
+      wrap.appendChild(row);
+    }
+  },
+  renderEsky(){
+    const wrap=$("esky"); wrap.innerHTML="";
+    $("eskyCap").textContent=`${usedCap()}/${S.cap}`;
+    const held=GOODS.filter(g=>S.inv[g.name]>0);
+    if(!held.length){ wrap.innerHTML=`<div class="lst-empty">Esky's empty — buy something to fill it.</div>`; return; }
+    for(const g of held){
+      const qty=S.inv[g.name], m=S.market[g.name], avgc=S.avg[g.name], sellable=m.avail;
+      let price="—", pl="—", plCls="";
+      if(sellable){
+        price=money(m.price);
+        const p=(m.price-avgc)*qty; pl=(p>=0?"+":"")+money(p); plCls=p>=0?"pl-pos":"pl-neg";
+      }
+      const row=document.createElement("div");
+      row.className="lst-row esky-grid"+(sellable?"":" dis");
+      if(sellable){ row.title="Sell "+g.name; row.onclick=()=>this.openTrade('sell',g.name); }
+      else { row.title="Not traded in "+S.loc; row.onclick=()=>toast("Can't sell "+g.name+" in "+S.loc,"bad"); }
+      row.innerHTML=`<span class="nm">${g.emoji} ${g.name}</span>`+
+        `<span class="r">${qty}</span>`+
+        `<span class="r">${price}</span>`+
+        `<span class="r ${plCls}">${pl}</span>`+
+        `<span class="acts"><button class="btn98 sm" ${sellable?"":"disabled"} onclick="event.stopPropagation();Game.openTrade('sell','${g.name}')"><span class="lbl">Sell</span></button></span>`;
+      wrap.appendChild(row);
+    }
+  },
+
+  renderServices(loc){
+    const body=$("svcBody");
+    if(loc && loc.bank){
+      body.innerHTML=`
+        <div class="svc-row">
+          <button class="btn98" onclick="Game.openBank('deposit')"><span class="lbl">🏦 Deposit</span></button>
+          <button class="btn98" onclick="Game.openBank('withdraw')" ${S.bank>0?"":"disabled"}><span class="lbl">💸 Withdraw</span></button>
+          <button class="btn98" onclick="Game.openShark()" ${S.debt>0?"":"disabled"}><span class="lbl">🦈 Pay Sharkie</span></button>
+        </div>
+        <p class="note">Bankwest <b>+${+(BANK_INT*100).toFixed(1)}%</b>/day · Sharkie <b>+${+(DEBT_INT*100).toFixed(1)}%</b>/day</p>`;
+    } else {
+      body.innerHTML=`<p class="note">Banking available in <b>Perth CBD</b> only.</p>`;
+    }
+  },
+
+  renderLog(){
+    const wrap=$("log"); wrap.innerHTML="";
+    for(let i=S.log.length-1;i>=0;i--){
+      const e=S.log[i];
+      const d=document.createElement("div");
+      d.className="logline "+(e.kind||""); d.innerHTML=e.msg;
+      wrap.appendChild(d);
+    }
+    wrap.scrollTop=0;
+  },
+
+  // ---------- trade ----------
+  _trade:{mode:"buy",good:null,max:0,price:0}, _money:false, _bankConfirm:null,
+  openTrade(mode,good){
+    const m=S.market[good]; if(!m.avail) return;
+    const price=m.price;
+    let max = mode==="buy" ? Math.min(Math.floor(S.cash/price),freeCap()) : S.inv[good];
+    if(max<=0){ toast(mode==="buy"?(freeCap()<=0?"Esky's full, mate!":"Not enough cash!"):"Nothing to sell!","bad"); return; }
+    this._trade={mode,good,max,price}; this._money=false;
+    const g=GMAP[good];
+    $("tmTitle").textContent=(mode==="buy"?"Buy ":"Sell ")+g.name;
+    $("tmText").innerHTML = mode==="buy"
+      ? `<b>${money(price)}</b> per ${g.unit}. You can afford <b>${max}</b> (esky space: ${freeCap()}).`
+      : `Selling at <b>${money(price)}</b> per ${g.unit}. You hold <b>${max}</b>.`;
+    $("tmUnit").textContent=money(price)+" / "+g.unit;
+    $("tmConfirm").querySelector(".lbl").textContent = mode==="buy"?"Buy":"Sell";
+    const chips=$("tmChips"); chips.innerHTML="";
+    for(const [lbl,frac] of (mode==="buy"?[["25%",.25],["50%",.5],["Max",1]]:[["25%",.25],["50%",.5],["All",1]])){
+      const c=document.createElement("div"); c.className="chip"; c.textContent=lbl;
+      c.onclick=()=>this.setQty(Math.max(1,Math.floor(max*frac))); chips.appendChild(c);
+    }
+    $("tmSlider").min=1; $("tmSlider").max=max;
+    this.setQty(1);
+    $("tradeOverlay").classList.add("active");
+  },
+  setQty(q){
+    const {max,price}=this._trade;
+    q=Math.max(0,Math.min(max,Math.round(q||0)));
+    $("tmQty").value=q; $("tmSlider").value=Math.max(1,q);
+    $("tmTotal").textContent=money(q*price);
+    $("tmConfirm").disabled=q<=0;
+  },
+  tradeStep(d){ this.setQty((parseInt($("tmQty").value)||0)+d); },
+  tradeInput(){ this.setQty(parseInt($("tmQty").value)||0); },
+  tradeSlider(){ this.setQty(parseInt($("tmSlider").value)||0); },
+  closeTrade(){ this._money=false; $("tradeOverlay").classList.remove("active"); },
+  tradeConfirm(){
+    if(this._money){ this._money=false; this._bankConfirm&&this._bankConfirm(); return; }
+    const q=parseInt($("tmQty").value)||0; if(q<=0) return;
+    const {mode,good,price}=this._trade;
+    if(mode==="buy"){
+      const cost=q*price;
+      if(cost>S.cash){ toast("Not enough cash!","bad"); return; }
+      if(q>freeCap()){ toast("Esky's full!","bad"); return; }
+      const prevTot=S.inv[good]*S.avg[good];
+      S.inv[good]+=q; S.avg[good]=Math.round((prevTot+cost)/S.inv[good]); S.cash-=cost;
+      logMsg(`Bought <b>${q}× ${good}</b> for ${money(cost)}.`); toast(`Bought ${q}× ${good}`,"good");
+    } else {
+      const gain=q*price, profit=(price-S.avg[good])*q;
+      S.inv[good]-=q; S.cash+=gain; if(S.inv[good]===0) S.avg[good]=0;
+      logMsg(`Sold <b>${q}× ${good}</b> for ${money(gain)} (${profit>=0?"+":""}${money(profit)}).`, profit>=0?"good":"bad");
+      toast(`Sold ${q}× ${good}`,"good");
+    }
+    this.closeTrade(); this.render();
+  },
+
+  // ---------- bank / shark ----------
+  openMoneyModal(title,btn,maxAmt,text,confirmFn){
+    this._trade={mode:"money",good:null,max:maxAmt,price:1}; this._money=true; this._bankConfirm=confirmFn;
+    $("tmTitle").textContent=title; $("tmText").innerHTML=text; $("tmUnit").textContent="";
+    $("tmConfirm").querySelector(".lbl").textContent=btn;
+    const chips=$("tmChips"); chips.innerHTML="";
+    for(const [lbl,frac] of [["25%",.25],["50%",.5],["Max",1]]){
+      const c=document.createElement("div"); c.className="chip"; c.textContent=lbl;
+      c.onclick=()=>this.setMoneyQty(Math.floor(maxAmt*frac)); chips.appendChild(c);
+    }
+    $("tmSlider").min=1; $("tmSlider").max=maxAmt;
+    this.setMoneyQty(maxAmt);
+    $("tradeOverlay").classList.add("active");
+  },
+  setMoneyQty(q){
+    const {max}=this._trade;
+    q=Math.max(0,Math.min(max,Math.round(q||0)));
+    $("tmQty").value=q; $("tmSlider").value=Math.max(1,q);
+    $("tmTotal").textContent=money(q); $("tmConfirm").disabled=q<=0;
+  },
+  openBank(kind){
+    if(!LOCATIONS.find(l=>l.name===S.loc).bank){ toast("Banking only in Perth CBD!","bad"); return; }
+    const isDep=kind==="deposit", max=isDep?S.cash:S.bank;
+    if(max<=0){ toast(isDep?"No cash to deposit!":"Bank's empty!","bad"); return; }
+    this.openMoneyModal(
+      isDep?"Deposit into Bankwest":"Withdraw from Bankwest",
+      isDep?"Deposit":"Withdraw", max,
+      isDep?`You've got <b>${money(S.cash)}</b> in hand.`:`You've got <b>${money(S.bank)}</b> banked.`,
+      ()=>{ const amt=parseInt($("tmQty").value)||0; if(amt<=0) return;
+        if(isDep){ S.cash-=amt; S.bank+=amt; logMsg(`Banked <b>${money(amt)}</b> at Bankwest.`,"good"); toast("Deposited "+money(amt),"good"); }
+        else { S.bank-=amt; S.cash+=amt; logMsg(`Withdrew <b>${money(amt)}</b>.`); toast("Withdrew "+money(amt),"good"); }
+        this.closeTrade(); this.render(); });
+  },
+  openShark(){
+    if(!LOCATIONS.find(l=>l.name===S.loc).bank){ toast("Find Sharkie in Perth CBD!","bad"); return; }
+    if(S.debt<=0){ toast("You're debt-free!","good"); return; }
+    if(S.cash<=0){ toast("No cash to pay Sharkie!","bad"); return; }
+    const max=Math.min(S.cash,S.debt);
+    this.openMoneyModal("Pay back Sharkie","Pay Up",max,
+      `You owe <b>${money(S.debt)}</b>. You can pay up to <b>${money(max)}</b> now.`,
+      ()=>{ const amt=parseInt($("tmQty").value)||0; if(amt<=0) return;
+        S.cash-=amt; S.debt-=amt;
+        logMsg(`Paid <b>${money(amt)}</b> to Sharkie. ${S.debt<=0?"<b>Debt cleared!</b>":""}`,"good");
+        toast("Paid Sharkie "+money(amt),"good"); this.closeTrade(); this.render(); });
+  },
+
+  // ---------- travel + day ----------
+  travel(dest){
+    S.loc=dest; S.day++;
+    if(S.debt>0) S.debt=Math.round(S.debt*(1+DEBT_INT));
+    if(S.bank>0) S.bank=Math.round(S.bank*(1+BANK_INT));
+    logMsg(`Traveled to ${dest} (day ${S.day}).`);
+    if(S.day>MAX_DAYS){ this.endGame(); return; }
+    this.genMarket(); this.render();
+    setTimeout(()=>{ if(S.note) this.showNews(()=>this.maybeEvent()); else this.maybeEvent(); },160);
+  },
+
+  // ---------- events ----------
+  maybeEvent(){
+    const roll=Math.random(), heat=Math.min(0.42,0.12+usedCap()/(S.cap*4));
+    if(roll<heat) return this.evPolice();
+    if(roll<heat+0.10) return this.evMugged();
+    if(roll<heat+0.18) return this.evFind();
+    if(roll<heat+0.24 && !S.coatOffered) return this.evCoat();
+    if(roll<heat+0.30 && S.day-S.gunOfferedDay>4) return this.evGun();
+    if(roll<heat+0.36) return this.evDoctor();
+  },
+
+  showEvent(emoji,bar,title,text,buttons){
+    $("evEmoji").textContent=emoji; $("evBar").textContent=bar;
+    $("evTitle").textContent=title; $("evText").innerHTML=text;
+    const wrap=$("evBtns"); wrap.innerHTML="";
+    for(const b of buttons){
+      const btn=document.createElement("button"); btn.className="btn98"+(b.primary?" primary":"");
+      btn.innerHTML=`<span class="lbl">${b.label}</span>`;
+      btn.onclick=()=>{ this.closeEvent(); b.fn&&b.fn(); this.render(); };
+      wrap.appendChild(btn);
+    }
+    $("eventOverlay").classList.add("active");
+  },
+  closeEvent(){ $("eventOverlay").classList.remove("active"); },
+  showNews(then){
+    this.showEvent("📰","📰 Newsflash","",S.note,[{label:"OK", primary:true, fn:then}]);
+  },
+
+  evPolice(){
+    const hasGun=S.guns>0, cargo=usedCap();
+    if(cargo===0 && S.cash<200){ logMsg("Police stopped you — you were clean.","good"); this.render(); return; }
+    this.showEvent("🚨","🚨 WA Police",`Pulled over near ${S.loc}.`,"",
+      [
+        { label:"Fight", primary:true, fn:()=>this.policeFight(hasGun) },
+        { label:"Run", fn:()=>this.policeRun() },
+      ]);
+  },
+  policeFight(hasGun){
+    const win = hasGun ? 0.55+Math.min(0.3,S.guns*0.12) : 0.32;
+    if(Math.random()<win){
+      const r=rndi(150,600+S.day*30); S.cash+=r;
+      logMsg(`Escaped the police. +${money(r)}.`,"good"); toast("Escaped +"+money(r),"good");
+    } else {
+      const dmg=rndi(12,34); S.hp-=dmg; const loss=this.confiscate(0.4);
+      logMsg(`Busted — lost ${dmg} HP${loss?` and ${loss} goods`:""}.`,"bad"); toast("Busted -"+dmg+" HP","bad");
+      this.checkDeath("were caught by the WA Police");
+    }
+  },
+  policeRun(){
+    if(Math.random()<0.6){ logMsg("Lost the police.","good"); toast("Escaped","good"); }
+    else { const loss=this.confiscate(0.5), dmg=rndi(5,18); S.hp-=dmg;
+      logMsg(`Caught — lost ${loss||"some"} goods and ${dmg} HP.`,"bad"); toast("Caught","bad");
+      this.checkDeath("were caught by the WA Police"); }
+  },
+  confiscate(frac){
+    let lost=0;
+    for(const g of GOODS){ const q=S.inv[g.name]; if(q<=0) continue;
+      const take=Math.ceil(q*frac*rnd(0.5,1)); S.inv[g.name]-=take; lost+=take; if(S.inv[g.name]===0) S.avg[g.name]=0; }
+    return lost;
+  },
+  evMugged(){
+    if(S.cash<50){ this.evFind(); return; }
+    const loss=Math.round(S.cash*rnd(0.1,0.35)); S.cash-=loss;
+    this.showEvent("💸","💸 Mugged",`Mugged in ${S.loc}. Lost ${money(loss)}.`,"",
+      [{label:"OK", primary:true}]);
+    logMsg(`Mugged — lost ${money(loss)}.`,"bad");
+  },
+  evFind(){
+    const g=pick(GOODS), qty=rndi(2,8+Math.floor(S.day/3)), take=Math.min(qty,freeCap());
+    if(take<=0){ logMsg("🎒 Found a stash but no room to carry it.","gold"); this.render(); return; }
+    const prevTot=S.inv[g.name]*S.avg[g.name];
+    S.inv[g.name]+=take; S.avg[g.name]=Math.round(prevTot/S.inv[g.name]);
+    this.showEvent("🎒","🎒 Found Goods",`Found ${take}× ${g.emoji} ${g.name} in ${S.loc}.`,"",
+      [{label:"Take it", primary:true}]);
+    logMsg(`Found ${take}× ${g.name}.`,"good");
+  },
+  evCoat(){
+    S.coatOffered=true; const add=rndi(40,90), cost=rndi(180,520);
+    if(S.cash<cost) return;
+    this.showEvent("🧊","🧊 Bigger Esky",`+${add} esky space for ${money(cost)}.`,"",
+      [ {label:`Buy (+${add})`, primary:true, fn:()=>{ S.cash-=cost; S.cap+=add; logMsg(`Esky upgraded to ${S.cap}.`,"good"); toast("Esky upgraded","good"); }},
+        {label:"No"} ]);
+  },
+  evGun(){
+    S.gunOfferedDay=S.day; const cost=rndi(450,1400);
+    if(S.cash<cost) return;
+    this.showEvent("🔫","🔫 Buy a Gun",`A gun for ${money(cost)}. Helps against police.`,"",
+      [ {label:"Buy", primary:true, fn:()=>{ S.cash-=cost; S.guns++; logMsg(`Bought a gun (${S.guns}).`,"gold"); toast("Gun bought","good"); }},
+        {label:"No"} ]);
+  },
+  evDoctor(){
+    if(S.hp>=100) return;
+    const per=rndi(8,16), missing=100-S.hp, cost=Math.round(missing/10*per);
+    if(S.cash<cost) return;
+    this.showEvent("🩹","🩹 Medic",`Restore ${Math.round(missing)} HP for ${money(cost)}.`,"",
+      [ {label:"Heal", primary:true, fn:()=>{ S.cash-=cost; S.hp=100; logMsg("Healed to full HP.","good"); toast("Healed","good"); }},
+        {label:"No"} ]);
+  },
+  checkDeath(reason){ if(S.hp<=0){ S.hp=0; this.endGame(reason); } },
+
+  // ---------- confirm / quit ----------
+  confirmQuit(){
+    $("cfBar").textContent="Cash Out?"; $("cfTitle").textContent="Bail out now?";
+    $("cfText").innerHTML=`You're on <b>day ${S.day}</b> with a net worth of <b>${money(netWorth())}</b>. Cash it in and end the run?`;
+    $("cfYes").querySelector(".lbl").textContent="Cash Out";
+    $("cfYes").onclick=()=>{ this.closeConfirm(); this.endGame("bailed out early"); };
+    $("confirmOverlay").classList.add("active");
+  },
+  confirmFinish(){
+    $("cfBar").textContent="Finish Run"; $("cfTitle").textContent="Finish the 30 days?";
+    $("cfText").innerHTML=`Sell any stock first — only cash counts. Net worth: <b>${money(netWorth())}</b>. End the game and tally your score?`;
+    $("cfYes").querySelector(".lbl").textContent="Finish";
+    $("cfYes").onclick=()=>{ this.closeConfirm(); this.endGame(""); };
+    $("confirmOverlay").classList.add("active");
+  },
+  closeConfirm(){ $("confirmOverlay").classList.remove("active"); },
+
+  // ---------- end ----------
+  endGame(reason=""){
+    this.closeAllOverlays();
+    const died=S.hp<=0, score=Math.max(0,netWorth());
+    const ranks=[
+      [0,"Broke","🪫"],[3000,"Battler","🛠️"],[9000,"Small-Time","🦺"],
+      [25000,"Hustler","🎰"],[60000,"Kingpin","👑"],
+      [120000,"Cartel Boss","🐍"],[250000,"Legend","🌊"],
+    ];
+    let rank=ranks[0]; for(const r of ranks) if(score>=r[0]) rank=r;
+    let hs=0; try{ hs=parseInt(localStorage.getItem("dwperth_hs")||"0")||0; }catch(e){}
+    const isNew=score>hs; if(isNew){ try{ localStorage.setItem("dwperth_hs",String(score)); }catch(e){} }
+
+    $("goTitlebar").textContent = died?"💀 Game Over":"🏁 Final Tally";
+    $("goTitle").textContent = died?"💀 KARKED IT":"RUN COMPLETE";
+    $("goEmoji").textContent = died?"💀":rank[2];
+    $("goScore").textContent = money(score);
+    $("goRank").textContent = (died?"Final Rank: ":"")+rank[1];
+    $("goGrid").innerHTML=`
+      <div class="stat cash"><div class="lbl">Final Cash</div><div class="val">${money(S.cash)}</div></div>
+      <div class="stat bank"><div class="lbl">Banked</div><div class="val">${money(S.bank)}</div></div>
+      <div class="stat debt"><div class="lbl">Owed Sharkie</div><div class="val">${money(S.debt)}</div></div>
+      <div class="stat"><div class="lbl">Days Survived</div><div class="val">${Math.min(S.day,MAX_DAYS)}</div></div>`;
+    $("goHs").innerHTML=(died?`You ${reason}. `:"")+(isNew?`🏆 <b>NEW HIGH SCORE!</b> Previous best: ${money(hs)}`:`High score: <b>${money(Math.max(hs,score))}</b>`);
+
+    // ---- live leaderboard (only if configured/reachable) ----
+    if(LB_ON){
+      const day=Math.min(S.day,MAX_DAYS), rankName=rank[1];
+      $("lbBox").style.display="block";
+      const nameIn=$("lbName"), btn=$("lbSubmit");
+      let saved=""; try{ saved=localStorage.getItem("dwperth_name")||""; }catch(e){}
+      if(nameIn) nameIn.value=saved;
+      Leaderboard.top(rows=>Leaderboard.render(rows));   // show board immediately (read-only)
+      if(btn){
+        btn.disabled = score<=0;                          // nothing to post on a $0 run
+        btn.onclick=()=>{
+          if(score<=0) return;
+          const nm=((nameIn&&nameIn.value)||"").trim().slice(0,20) || "Anon";
+          try{ localStorage.setItem("dwperth_name",nm); }catch(e){}
+          btn.disabled=true;                              // prevent double submit
+          Leaderboard.submit({name:nm, score:score, day:day, rank:rankName}, ok=>{
+            if(ok){ toast("Posted!","good"); Leaderboard.top(rows=>Leaderboard.render(rows)); }
+            else  { toast("Couldn't post — try again.","bad"); btn.disabled=false; }
+          });
+        };
+      }
+    }
+
+    this.showScreen("overScreen");
+  },
+
+  closeAllOverlays(){ ["tradeOverlay","eventOverlay","confirmOverlay"].forEach(id=>$(id).classList.remove("active")); Menu.close(); },
+
+  // ---------- titlebar jokes ----------
+  tbJoke(which){
+    if(which!=="close" || !this.inGame()) return;
+    if(S.day>=MAX_DAYS) this.confirmFinish(); else this.confirmQuit();
+  },
+  inGame(){ return $("gameScreen").classList.contains("active") && !!S; },
+  showInfo(bar,title,text){ this.showEvent("ℹ️",bar,title,text,[{label:"OK",primary:true}]); },
+};
+
+// route shared confirm button (already handled inside tradeConfirm via _money flag)
+
+// =========================================================
+//  LIVE LEADERBOARD (Supabase REST — no SDK, degrades gracefully)
+// =========================================================
+const Leaderboard = {
+  _headers(extra){
+    return Object.assign({
+      "apikey": SB_KEY,
+      "Authorization": "Bearer "+SB_KEY,
+      "Content-Type": "application/json",
+    }, extra||{});
+  },
+  _esc(s){ return String(s==null?"":s).replace(/[<>&]/g, c=>({"<":"&lt;",">":"&gt;","&":"&amp;"}[c])); },
+  // Read top 10 (read-only); falls back to an "offline" render on any failure.
+  top(cb){
+    if(!LB_ON){ this.render([], true); return; }
+    const url = SB_URL+"/rest/v1/scores?select=name,score,rank,created_at&order=score.desc&limit=10";
+    try{
+      fetch(url, { headers: this._headers() })
+        .then(r => r.ok ? r.json() : Promise.reject(r.status))
+        .then(rows => cb ? cb(rows||[]) : this.render(rows||[]))
+        .catch(() => this.render([], true));
+    }catch(e){ this.render([], true); }
+  },
+  // Insert one score; cb(ok) on completion. Never throws into gameplay.
+  submit(row, cb){
+    if(!LB_ON){ cb && cb(false); return; }
+    try{
+      fetch(SB_URL+"/rest/v1/scores", {
+        method: "POST",
+        headers: this._headers({ "Prefer":"return=minimal" }),
+        body: JSON.stringify(row),
+      })
+        .then(r => cb && cb(r.ok))
+        .catch(() => cb && cb(false));
+    }catch(e){ cb && cb(false); }
+  },
+  // Paint #lbRows (reuses .log / .logline styling).
+  render(rows, offline){
+    const wrap = $("lbRows"); if(!wrap) return;
+    if(!rows || !rows.length){
+      const msg = (offline || !LB_ON) ? "Leaderboard offline." : "No scores yet — be the first!";
+      wrap.innerHTML = `<div class="logline" style="font-style:italic;color:var(--gray-dd)">${msg}</div>`;
+      return;
+    }
+    wrap.innerHTML = rows.map((r,i)=>{
+      const rk = r.rank ? ` <span style="color:var(--gray-dd)">· ${this._esc(r.rank)}</span>` : "";
+      return `<div class="logline"><b>${i+1}.</b> ${this._esc(r.name||"Anon")}${rk} — <b>${money(r.score)}</b></div>`;
+    }).join("");
+  },
+};
+
+// =========================================================
+//  MENU BAR
+// =========================================================
+const Menu = {
+  el:null,
+  close(){ if(this.el){ this.el.remove(); this.el=null; } document.querySelectorAll(".menu.open").forEach(m=>m.classList.remove("open")); },
+  open(name, anchor){
+    this.close();
+    anchor.classList.add("open");
+    const items=this.items(name);
+    const dd=document.createElement("div"); dd.className="dropdown";
+    for(const it of items){
+      if(it.sep){ const s=document.createElement("div"); s.className="sep"; dd.appendChild(s); continue; }
+      const mi=document.createElement("div"); mi.className="mi"+(it.dis?" dis":"");
+      mi.innerHTML=`<span>${it.chk?'<span class="chk">✓</span>':''}${it.label}</span><span>${it.acc||""}</span>`;
+      if(!it.dis) mi.onclick=()=>{ this.close(); it.fn&&it.fn(); };
+      dd.appendChild(mi);
+    }
+    document.body.appendChild(dd);
+    const r=anchor.getBoundingClientRect();
+    dd.style.left=r.left+"px"; dd.style.top=(r.bottom)+"px";
+    this.el=dd;
+  },
+  items(name){
+    const g=Game.inGame();
+    if(name==="file"){
+      const fin = g && S.day>=MAX_DAYS;
+      return [
+        {label:"New Game", fn:()=>Game.start()},
+        {sep:true},
+        {label:fin?"Finish":"Cash Out", dis:!g, fn:()=> fin?Game.confirmFinish():Game.confirmQuit()},
+      ];
+    }
+    if(name==="travel"){
+      if(!g) return [{label:"(start a game first)", dis:true}];
+      if(S.day>=MAX_DAYS) return [{label:"(final day — finish up)", dis:true}];
+      return LOCATIONS.map(l=>({label:l.name, chk:l.name===S.loc, dis:l.name===S.loc, fn:()=>Game.travel(l.name)}));
+    }
+    if(name==="bank"){
+      const inCbd = g && S.loc==="Perth CBD";
+      return [
+        {label:"Deposit Cash", dis:!inCbd, fn:()=>Game.openBank("deposit")},
+        {label:"Withdraw", dis:!inCbd, fn:()=>Game.openBank("withdraw")},
+        {sep:true},
+        {label:"Pay Sharkie", dis:!inCbd, fn:()=>Game.openShark()},
+      ];
+    }
+    if(name==="help") return [
+      {label:"How to Play...", fn:()=>Game.showInfo("ℹ️ How to Play","How to Play",
+        "Click a suburb on the map to travel (1 day each). Buy low, sell high. Bank cash in Perth CBD. Survive 30 days with the highest net worth.")},
+      {sep:true},
+      {label:"About...", fn:()=>Game.showInfo("ℹ️ About","Dope Wars: Perth",
+        "Windows 98–styled, Perth-themed take on the classic Dope Wars. Parody — fictional goods.")},
+    ];
+    return [];
+  },
+};
+
+// menu wiring
+document.querySelectorAll(".menu").forEach(m=>{
+  m.addEventListener("click",e=>{
+    e.stopPropagation();
+    if(m.classList.contains("open")) Menu.close();
+    else Menu.open(m.dataset.menu, m);
+  });
+  m.addEventListener("mouseenter",()=>{ if(Menu.el) Menu.open(m.dataset.menu, m); });
+});
+document.addEventListener("click",()=>Menu.close());
+document.addEventListener("keydown",e=>{ if(e.key==="Escape"){ Game.closeTrade(); Game.closeConfirm(); Game.closeEvent(); Menu.close(); } });
+window.addEventListener("resize",()=>{ try{ Game.syncTradeHeight(); }catch(e){} });
+</script>
+</body>
+</html>
